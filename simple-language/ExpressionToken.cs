@@ -1,20 +1,22 @@
-﻿using sly.lexer;
+﻿using Newtonsoft.Json.Linq;
+using sly.lexer;
 
 namespace MyParsers;
 
-public enum ExpressionToken {
+public enum JsonTokenGeneric
+{
+    [Lexeme(GenericToken.String,channel:0)] STRING = 1,
+    [Lexeme(GenericToken.Double,channel:0)] DOUBLE = 2,
+    [Lexeme(GenericToken.Int,channel:0)] INT = 3,
 
-    //[Lexeme("[0-9]+")]
-    [Lexeme("[0-9]+")]
-    INT = 1,
-
-    [Lexeme("\\+")] 
-    PLUS = 2,
+    [Lexeme(GenericToken.KeyWord,channel:0, "true", "false")]
+    BOOLEAN = 4,
     
-    [Lexeme("\\-")] 
-    MINUS = 3,
-
-    [Lexeme("[ \\t]+", isSkippable:true)] // the lexeme is marked isSkippable : it will not be sent to the parser and simply discarded.
-    WS = 40 
-
+    [Lexeme(GenericToken.SugarToken,channel:0, "{")] ACCG = 5, // ACCG = 
+    [Lexeme(GenericToken.SugarToken,channel:0, "}")] ACCD = 6,
+    [Lexeme(GenericToken.SugarToken,channel:0, "[")] CROG = 7,
+    [Lexeme(GenericToken.SugarToken,channel:0, "]")] CROD = 8,
+    [Lexeme(GenericToken.SugarToken,channel:0, ",")] COMMA = 9,
+    [Lexeme(GenericToken.SugarToken,channel:0, "=")] EQUALS = 10,
+    [Lexeme(GenericToken.KeyWord,channel:0, "null")] NULL = 14
 }

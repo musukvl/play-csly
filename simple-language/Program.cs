@@ -2,26 +2,42 @@
 
 
 using MyParsers;
+using Newtonsoft.Json;
+using sly.parser.generator;
 
-string expression = "42  + 42 - 7";
+string expression = @" { 
+    ""name"" = ""John"", 
+    ""age"" = 42 
+} ";
 
-var parser = MyFirstParser.GetParser();
+var jsonParser = new EbnfJsonGenericParser();
+var builder = new ParserBuilder<JsonTokenGeneric, JSon>();
+var parserBuildResult = builder.BuildParser(jsonParser, ParserType.EBNF_LL_RECURSIVE_DESCENT, "root");
+
+if (!parserBuildResult.IsOk)
+{
+    Console.WriteLine("parser construction failed");
+    Console.WriteLine(string.Join("\n", parserBuildResult.Errors));
+    return;
+}
+
+var parser = parserBuildResult.Result;
+
 var parseResult = parser.Parse(expression);
 
 
 
 if (!parseResult.IsError) 
 {
-    Console.WriteLine($"result of <{expression}>  is {(int)parseResult.Result}");
-    // outputs : result of <42 + 42>  is 84"
+    Console.WriteLine($"result of <{expression}>  is {JsonConvert.SerializeObject(parseResult.Result, Formatting.Indented)}");
+    
 }
 else
 {
     if (parseResult.Errors != null && parseResult.Errors.Any())
     {
-        // display errors
         parseResult.Errors.ForEach(error => Console.WriteLine(error.ErrorMessage));
     }
 }
 
-Console.WriteLine("Hello, World!");
+Console.WriteLine("Done.");
